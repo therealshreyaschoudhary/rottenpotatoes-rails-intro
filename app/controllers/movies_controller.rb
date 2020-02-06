@@ -25,7 +25,7 @@ class MoviesController < ApplicationController
     
     
     #params[:ratings].nil? ? rating_param = @all_ratings : rating_param  = params[:ratings].keys
-    @movies = Movie.where(rating:session[:ratings]).order(session[:sort])
+    @movies = Movie.where(rating:session[:ratings].keys).order(session[:sort])
     
     if (params[:sort_by].nil? and !(session[:sort].nil?)) or (params[:ratings].nil? and !(session[:ratings].nil?))
       flash.keep
