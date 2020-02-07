@@ -15,7 +15,7 @@ class MoviesController < ApplicationController
    
     @sorted_column = params[:sort_by] || session[:sort]
 
-    session[:ratings] = session[:ratings] || @all_ratings
+    session[:ratings] = session[:ratings] || {'G'=> ''}
 
     @rating_param = params[:ratings] || session[:ratings]
 
@@ -25,11 +25,8 @@ class MoviesController < ApplicationController
 
 
     #params[:ratings].nil? ? rating_param = @all_ratings : rating_param  = params[:ratings].keys
-    if session[:ratings].key?
-      @movies = Movie.where(rating:session[:ratings].keys).order(session[:sort])
-    else 
-      @movies = Movie.where(rating:session[:ratings]).order(session[:sort])
-    end
+    @movies = Movie.where(rating:session[:ratings].keys).order(session[:sort])
+ 
 
     if (params[:sort_by].nil? and !(session[:sort].nil?)) or (params[:ratings].nil? and !(session[:ratings].nil?))
       flash.keep
