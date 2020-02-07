@@ -16,20 +16,31 @@ class MoviesController < ApplicationController
       session[:ratings] = {}
     end
     @all_ratings = Movie.ratings
-   
-    @sorted_column = params[:sort_by] || session[:sort]
-
-    session[:ratings] = session[:ratings] || {"G"=>"", "PG-13"=> "", "R"=>"", "PG"=>""}
-
-    @rating_param = params[:ratings] || session[:ratings]
+    if session[:ratings].nil?
+      if params[:ratings].nil?
+        @rating_param = @all_ratings
+      else
+        @rating_param = params[:ratings].keys
+        session[:ratings] = params[:ratings]
+      end
+    else
+      @rating_param = session[:ratings].keys
+    end
     
-    session[:sort] = @sorted_column
+    
+   # @sorted_column = params[:sort_by] || session[:sort]
 
-    session[:ratings] = @rating_param
+    #session[:ratings] = session[:ratings] || {"G"=>"", "PG-13"=> "", "R"=>"", "PG"=>""}
+
+    #@rating_param = params[:ratings] || session[:ratings]
+    
+    #session[:sort] = @sorted_column
+
+    #session[:ratings] = @rating_param
 
 
     #params[:ratings].nil? ? rating_param = @all_ratings : rating_param  = params[:ratings].keys
-    @movies = Movie.where(rating:session[:ratings].keys).order(session[:sort])
+    @movies = Movie.where(rating:@rating_param).order(session[:sort])
  
 
     if (params[:sort_by].nil? and !(session[:sort].nil?)) or (params[:ratings].nil? and !(session[:ratings].nil?))
