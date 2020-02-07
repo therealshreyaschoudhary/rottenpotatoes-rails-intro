@@ -11,38 +11,25 @@ class MoviesController < ApplicationController
   end
 
   def index
-    
-    if !(session[:ratings].nil?)
-      session[:ratings] = {}
-    end
     @all_ratings = Movie.ratings
-    if session[:ratings].nil?
-      if params[:ratings].nil?
-        @rating_param = @all_ratings
-      else
-        @rating_param = params[:ratings].keys
-        session[:ratings] = params[:ratings]
-      end
-    else
-      @rating_param = session[:ratings].keys
+
+  
+    if !(params[:sort_by].nil?)
+      session[:sort] = params[:sort_by]
+      @sorted_column = session[:sort]
+
     end
     
-    
-   # @sorted_column = params[:sort_by] || session[:sort]
+    if !(params[:ratings].nil?)
+      session[:ratings] = params[:ratings]
+      @rating_param = params[:ratings].keys
+    else
+      @rating_param = @all_ratings
+    end
 
-    #session[:ratings] = session[:ratings] || {"G"=>"", "PG-13"=> "", "R"=>"", "PG"=>""}
+       @movies = Movie.where(rating:@rating_param).order(session[:sort])
 
-    #@rating_param = params[:ratings] || session[:ratings]
-    
-    #session[:sort] = @sorted_column
-
-    #session[:ratings] = @rating_param
-
-
-    #params[:ratings].nil? ? rating_param = @all_ratings : rating_param  = params[:ratings].keys
-    @movies = Movie.where(rating:@rating_param).order(session[:sort])
- 
-
+   
     if (params[:sort_by].nil? and !(session[:sort].nil?)) or (params[:ratings].nil? and !(session[:ratings].nil?))
       flash.keep
       redirect_to movies_path(sort_by: session[:sort], ratings:session[:ratings])
